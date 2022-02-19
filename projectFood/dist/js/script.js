@@ -272,10 +272,17 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     return await result.json(); // Это промис
-  };
+  }; // getResource('http://localhost:3000/menu')
+  //     .then(data => {
+  //         data.forEach(({title, descr, price, img, altimg}) => {
+  //             new MenuCard(title, descr, price, img, altimg, '.menu .container').render();
+  //         });
+  //     });
+  //=======ПРИМЕР С БИБЛИОТЕКОЙ Axios
 
-  getResource('http://localhost:3000/menu').then(data => {
-    data.forEach(({
+
+  axios.get('http://localhost:3000/menu').then(data => {
+    data.data.forEach(({
       title,
       descr,
       price,
@@ -284,7 +291,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }) => {
       new MenuCard(title, descr, price, img, altimg, '.menu .container').render();
     });
-  }); //=============ЕЩЕ ОДИН СПОСОБ ВЫВОДА ДИНАМИЧЕСКИХ КАРТОЧЕК 
+  }); //====================================
+  //=============ЕЩЕ ОДИН СПОСОБ ВЫВОДА ДИНАМИЧЕСКИХ КАРТОЧЕК 
   // getResource('http://localhost:3000/menu')
   //     .then(data => createCard(data));
   // function createCard(data) {

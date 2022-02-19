@@ -190,12 +190,25 @@ window.addEventListener('DOMContentLoaded', () => {
         return await result.json(); // Это промис
     };
 
-    getResource('http://localhost:3000/menu')
+    // getResource('http://localhost:3000/menu')
+    //     .then(data => {
+    //         data.forEach(({title, descr, price, img, altimg}) => {
+    //             new MenuCard(title, descr, price, img, altimg, '.menu .container').render();
+    //         });
+    //     });
+
+    //=======ПРИМЕР С БИБЛИОТЕКОЙ Axios
+    axios.get('http://localhost:3000/menu')
         .then(data => {
-            data.forEach(({title, descr, price, img, altimg}) => {
+            data.data.forEach(({title, descr, price, img, altimg}) => {
                 new MenuCard(title, descr, price, img, altimg, '.menu .container').render();
             });
-        });
+        });    
+
+    //====================================
+
+
+
 
     //=============ЕЩЕ ОДИН СПОСОБ ВЫВОДА ДИНАМИЧЕСКИХ КАРТОЧЕК 
     // getResource('http://localhost:3000/menu')
