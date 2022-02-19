@@ -237,28 +237,6 @@ window.addEventListener('DOMContentLoaded', () => {
             `;
             form.insertAdjacentElement('afterend', statusMessage);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-            // const formData = new FormData(form); // собираем данные из формы
-
-            // request.send(formData);
-
-            // request.addEventListener('load', () => {
-            //     if (request.status === 200) {
-            //         console.log(request.response);
-            //         statusMessage.textContent = message.success;
-            //         form.reset();
-            //         setTimeout(() => {
-            //             statusMessage.remove();
-            //         }, 2000);
-            //     } else {
-            //         statusMessage.textContent = message.failure;
-            //     }
-            // });
-
-            //============== JSON ФОРМАТ
-            request.setRequestHeader('Content-type', 'application/json');
-
             const formData = new FormData(form); // собираем данные из формы
             const object = {};
             
@@ -266,20 +244,20 @@ window.addEventListener('DOMContentLoaded', () => {
                 object[key] = value;
             });
 
-            const json = JSON.stringify(object);
-
-            request.send(json);
-
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    showThanksModal(message.success);
-                    form.reset();
-                    statusMessage.remove();
-                } else {
-                    showThanksModal(message.failure);
-                }
-            });
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type' : 'application/json'
+                },
+                body: JSON.stringify(object)
+            }).then(data => data.text())
+            .then(data => {
+                console.log(data); // data - данные, которые вернул сервер
+                showThanksModal(message.success);
+                statusMessage.remove();
+            }).catch(() => {
+                showThanksModal(message.failure);
+            })
         });
     }
 
@@ -307,5 +285,9 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }, 4000);
     }
+
+    fetch('http://localhost:3000/menu')
+        .then(data => data.json())
+        .then(res => console.log(res));
 
 });
