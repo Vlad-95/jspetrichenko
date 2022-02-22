@@ -13,12 +13,17 @@
     "last 2 firefox versions",
     "last 2 ios versions"
   ],
+  "browsersList": [
+    "> 1%"
+  ],
   "devDependencies": {
     "@babel/core": "^7.17.5",
+    "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.16.11",
     "autoprefixer": "^9.8.8",
     "babel-loader": "^8.2.3",
     "browser-sync": "^2.27.7",
+    "core-js": "^3.21.1",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.2.0",
     "gulp-postcss": "^8.0.0",
