@@ -1,3 +1,5 @@
+import {getResource} from '../services/services';
+
 function cards() {
     class MenuCard {
         constructor(title, descr, price, src, alt, parentSelector, ...classes) {
@@ -39,24 +41,14 @@ function cards() {
 
             this.parent.append(element);
         }
-    }
+    }    
 
-    const getResource = async function(url) {
-        const result = await fetch(url);
-
-        if (!result.ok) {
-            throw new Error(`Сould not fetch ${url}, status ${result.status}`);
-        }
-
-        return await result.json(); // Это промис
-    };
-
-    // getResource('http://localhost:3000/menu')
-    //     .then(data => {
-    //         data.forEach(({title, descr, price, img, altimg}) => {
-    //             new MenuCard(title, descr, price, img, altimg, '.menu .container').render();
-    //         });
-    //     });
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({title, descr, price, img, altimg}) => {
+                new MenuCard(title, descr, price, img, altimg, '.menu .container').render();
+            });
+        });
 
     //=======ПРИМЕР С БИБЛИОТЕКОЙ Axios
     // axios.get('http://localhost:3000/menu')
@@ -98,4 +90,4 @@ function cards() {
     //==================================================================
 }
 
-module.exports = cards;
+export default cards;
