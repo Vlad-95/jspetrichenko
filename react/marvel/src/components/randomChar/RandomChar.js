@@ -5,17 +5,14 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 
 
 const RandomChar = () => {
 
     const [char, setChar] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    const marvelService = new MarvelService();
+    const {loading, error, getCharacter, clearError} = useMarvelService();
 
     useEffect(() => {
         updateChar();
@@ -29,25 +26,14 @@ const RandomChar = () => {
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-    }
-
-    const onCharLoading = () => {
-        setLoading(true);
-    }
-
-    const onError = () => {
-        setError(true);
-        setLoading(false);
     }
 
     const updateChar = () => {
+        clearError();
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        onCharLoading();
-        marvelService
-            .getCharacter(id)
-            .then(onCharLoaded)
-            .catch(onError);
+
+        getCharacter(id)
+            .then(onCharLoaded);
     }
 
     const errorMessage = error ? <ErrorMessage/> : null;
@@ -78,7 +64,7 @@ const RandomChar = () => {
 const View = ({char}) => {
     const {name, description, thumbnail, homepage, wiki} = char;
     
-    let imgStyle = (thumbnail.includes('image_not_available')) ? {'objectFit' : 'contain'} : {'objectFit' : 'cover'};
+    let imgStyle = (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') ? {'objectFit' : 'contain'} : {'objectFit' : 'cover'};
     return (
         <div className="randomchar__block">
             <img src={thumbnail} style={imgStyle} alt="Random character" className="randomchar__img"/>
