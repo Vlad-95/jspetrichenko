@@ -18,9 +18,6 @@ const CharList = (props) => {
         onRequest(offset, true);
     }, []);
 
-    // componentWillUnmount() {
-    //     window.removeEventListener('scroll')
-    // }
     const onRequest = (offset, initial) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true);        
         getAllCharacters(offset)
