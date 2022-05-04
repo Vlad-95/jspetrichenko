@@ -1,5 +1,5 @@
 {
-  "name": "marvel",
+  "name": "form",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,9 +9,7 @@
     "formik": "^2.2.9",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
-    "react-transition-group": "^4.4.2",
     "web-vitals": "^1.0.1",
     "yup": "^0.32.11"
   },
@@ -40,7 +38,6 @@
     ]
   },
   "devDependencies": {
-    "prop-types": "^15.8.1",
-    "sass": "^1.38.0"
+    "sass": "^1.42.1"
   }
 }
