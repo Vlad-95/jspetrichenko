@@ -8,12 +8,31 @@ import './comicsList.scss';
 import uw from '../../resources/img/UW.png';
 import xMen from '../../resources/img/x-men.png';
 
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner/>;
+            break;
+        case 'loading':
+            return newItemLoading ? <Component/> : <Spinner/>;
+            break;
+        case 'confirmed':
+            return <Component/>;
+            break;
+        case 'error':
+            return <ErrorMessage/>;
+            break;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
+
 const ComicsList = (props) => {
 
     const [comicsList, setComicsList] = useState([]);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [comicsEnded, setComicsEnded] = useState(false);
-    const {error, loading, getAllComics} = useMarvelService();
+    const {error, loading, getAllComics, process, setProcess} = useMarvelService();
     const [offset, setOffset] = useState(0);
 
     useEffect(() => {
@@ -23,7 +42,8 @@ const ComicsList = (props) => {
     const onRequest = (offset, initial) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true);        
         getAllComics(offset)
-            .then(onComicsListLoaded);
+            .then(onComicsListLoaded)
+            .then(() => setProcess('confirmed'))
     }
 
     const onComicsListLoaded = (newComicsList) => {
@@ -62,19 +82,11 @@ const ComicsList = (props) => {
                 {items}
             </ul>
         )
-    }
-
-    const items = renderItems(comicsList);
-
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newItemLoading ? <Spinner/> : null;
-    
+    }    
 
     return (
         <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {items}
+            {setContent(process, () => renderItems(comicsList), newItemLoading)}
             <button onClick={() => onRequest(offset)} disabled={newItemLoading} style={{'display': comicsEnded ? 'none' : 'block'}} className="button button__main button__long">
                 <div className="inner">load more</div>
             </button>
