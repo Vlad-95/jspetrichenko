@@ -4,7 +4,6 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
 
 import './charList.scss';
-import abyss from '../../resources/img/abyss.jpg';
 
 class CharList extends Component {
     state = {
@@ -22,7 +21,6 @@ class CharList extends Component {
     }
 
     onCharListLoaded = (charList) => {
-        console.log(charList)
         this.setState({
             charList, 
             loading: false
@@ -38,10 +36,11 @@ class CharList extends Component {
 
     renderItems(arr) {
         const items = arr.map(item => {
-            let imgStyle = (item.thumbnail.includes('image_not_available')) ? {'object-fit': 'contain'} : {};
-
+            let imgStyle = (item.thumbnail.includes('image_not_available')) ? {objectFit: 'contain'} : {};
             return (
-                <li className="char__item" key={item.id}>
+                <li 
+                    className="char__item" key={item.id}
+                    onClick={() => {this.props.onCharSelected(item.id)}}>
                     <img style={imgStyle} src={item.thumbnail} alt={item.name}/>
                     <div className="char__name">{item.name}</div>
                 </li>
