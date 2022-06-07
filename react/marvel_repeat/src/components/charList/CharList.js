@@ -1,4 +1,4 @@
-import { Component } from 'react/cjs/react.production.min';
+import React, { Component } from 'react/cjs/react.production.min';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
@@ -6,6 +6,8 @@ import MarvelService from '../../services/MarvelService';
 import './charList.scss';
 
 class CharList extends Component {
+    // focusRef = React.createRef();
+
     state = {
         charList: [],
         loading: true,
@@ -58,13 +60,35 @@ class CharList extends Component {
         })
     }
 
+    itemRefs = [];
+
+    setCardRef = ref => {
+        this.itemRefs.push(ref)
+    }
+
+    focusOnItem = (id) => {
+        this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
+        this.itemRefs[id].classList.add('char__item_selected');
+        this.itemRefs[id].focus();
+    }
+
     renderItems(arr) {
-        const items = arr.map(item => {
+        const items = arr.map((item, i) => {
             let imgStyle = (item.thumbnail.includes('image_not_available')) ? {objectFit: 'contain'} : {};
             return (
                 <li 
-                    className="char__item" key={item.id}
-                    onClick={() => {this.props.onCharSelected(item.id)}}>
+                    tabIndex={0}
+                    className="char__item" ref={this.setCardRef} key={item.id}
+                    onClick={() => {
+                        this.props.onCharSelected(item.id)
+                        this.focusOnItem(i)
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            this.props.onCharSelected(item.id);
+                            this.focusOnItem(i);
+                        }
+                    }}>
                     <img style={imgStyle} src={item.thumbnail} alt={item.name}/>
                     <div className="char__name">{item.name}</div>
                 </li>
