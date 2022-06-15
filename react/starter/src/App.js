@@ -1,4 +1,4 @@
-import {Component, useState, useEffect, useCallback, useMemo} from 'react';
+import {Component, useState, useEffect} from 'react';
 import {Container} from 'react-bootstrap';
 import './App.css';
 // class Slider extends Component {
@@ -46,32 +46,29 @@ import './App.css';
 //     }
 // }
 
-const countTotal = (num) => {
-    console.log('counting...');
-    return num + 10;
-}
 
-
-//ФУНКЦИОНАЛЬНЫЙ КОМПОНЕНТ
 const Slider = (props) => {
 
     const [slide, setSlide] = useState(0);
     const [autoplay, setAutoplay] = useState(false);
 
-    //для объединения каждого элемента state в одну переменную
-    // const [state, setState] = useState({slide: 0, autoplay: false});
-
-    const getSomeImages = useCallback(() => {
-        console.log('fetching')
-        return [
-            "https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg",
-            "https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg"
-        ]
-    }, [slide])
+    function logging() {
+        console.log('log');
+    }
 
     useEffect(() => {
-        document.title = `Slide: ${slide}`
+        console.log('effect')
+        document.title = `slide ${slide}`;
+
+        window.addEventListener('click', logging);
+
+        // Аналог willUnMount
+        return () => {
+            window.removeEventListener('click', logging);
+        }
+
     }, [slide])
+
 
     function changeSlide(i) {
         setSlide(slide => slide + i);
@@ -80,26 +77,11 @@ const Slider = (props) => {
     function toggleAutoplay() {
         setAutoplay(autoplay => !autoplay);
     }
-
-    const total = useMemo(() => {
-        return countTotal(slide);
-    }, [slide]);
-    
-    const style = useMemo(() => ({
-        color: slide > 4 ? 'red' : 'black'
-    }), [slide])
-
-    useEffect(() => {
-        console.log('style!')
-    }, [style]);
-
     return (
         <Container>
             <div className="slider w-50 m-auto">
-                <Slide getSomeImages={getSomeImages}/>
-                {/* <img className="d-block w-100" src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" alt="slide" /> */}
-                <div className="text-center mt-5">Active slide {slide} <br/>{autoplay ? 'auto': null}</div>
-                <div style={style} className="text-center mt-5">Total slides : {total}</div>
+                <img className="d-block w-100" src="https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg" alt="slide" />
+                <div className="text-center mt-5">Active slide {slide} <br/> {autoplay ? 'auto' : null}</div>
                 <div className="buttons mt-3">
                     <button 
                         className="btn btn-primary me-2"
@@ -116,25 +98,20 @@ const Slider = (props) => {
     )
 }
 
-const Slide = ({getSomeImages}) => {
-    const [images, setImages] = useState([]);
 
-    useEffect(() => {
-        setImages(getSomeImages())
-    }, [getSomeImages])
+function App() {
+
+    const [slider, setSlider] = useState(true);
+
+
 
     return (
         <>
-            {images.map((url, i) => <img key={i} className="d-block w-100" src={url} alt="slide" />)}
+            <button onClick={() => setSlider(false)}>click</button>
+            {slider ? <Slider/> : null}
         </>
-    )
-}
-
-
-function App() {
-  return (
-        <Slider/>
-  );
+        
+    );
 }
 
 export default App;
