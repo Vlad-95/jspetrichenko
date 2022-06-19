@@ -1,35 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 import './charList.scss';
 
 const CharList = (props) => {
     // focusRef = React.createRef();
-
     const [charList, setCharList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     useEffect(() => {
-        onRequest();
+        onRequest(offset, true);
     }, []) // пустой массив означает, что хук вызовется один раз только при загрузке
 
-    const onRequest = (offset) => {
-        onCharListLoading();
-        marvelService.getAllCharacters(offset)
-            .then(onCharListLoaded)
-            .catch(onError);
-    }
-
-    const onCharListLoading = () => {
-        setNewItemLoading(true);
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);        
+        getAllCharacters(offset)
+            .then(onCharListLoaded);
     }
 
     const onCharListLoaded = (newCharList) => {
@@ -39,15 +31,9 @@ const CharList = (props) => {
         }
 
         setCharList(charList => [...charList, ...newCharList]);
-        setLoading(loading => false);
         setNewItemLoading(newItemLoading => false);
         setOffset(offset => offset + 9);
         setCharEnded(charEnded => ended)
-    }
-
-    const onError = () => {
-        setError(true)
-        setLoading(loading => false);
     }
 
     const itemRefs = useRef([]);
@@ -60,7 +46,11 @@ const CharList = (props) => {
 
     function renderItems(arr) {
         const items = arr.map((item, i) => {
-            let imgStyle = (item.thumbnail.includes('image_not_available')) ? {objectFit: 'contain'} : {};
+            let imgStyle = {'objectFit' : 'cover'};
+            if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
+                imgStyle = {'objectFit' : 'contain'};
+            }
+
             return (
                 <li 
                     tabIndex={0}
@@ -95,14 +85,13 @@ const CharList = (props) => {
     const items = renderItems(charList);
 
     const errorMsg = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? items : null;
+    const spinner = (loading && !newItemLoading) ? <Spinner/> : null;
 
     return (
         <div className="char__list">
             {errorMsg}
             {spinner}
-            {content}
+            {items}
             <button 
                 onClick={() => onRequest(offset)}
                 disabled={newItemLoading} 
