@@ -2,6 +2,7 @@ import {useHttp} from '../../hooks/http.hook';
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CSSTransition, TransitionGroup} from 'react-transition-group';
+import { createSelector } from 'reselect';
 
 import { heroesFetching, heroesFetched, heroesFetchingError, heroDeleted } from '../../actions';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
@@ -15,7 +16,34 @@ import './heroesList.scss';
 // Удаление идет и с json файла при помощи метода DELETE
 
 const HeroesList = () => {
-    const {filteredHeroes, heroesLoadingStatus} = useSelector(state => state);
+
+    // фильтрацию вытащили из reducer, чтобы очистить сам редюсер
+    //В РЕДЬЮСЕРЕ ДОЛЖНЫ БЫТЬ ТОЛЬКО ПРОСТЫЕ ОПЕРАЦИИ
+    // const filteredHeroes = useSelector(state => {
+    //     if (state.filters.activeFilter === 'all') {
+    //         return state.heroes.heroes;
+    //     } else {
+    //         return state.heroes.heroes.filter(item => item.element === state.filters.activeFilter)
+    //     }
+    // })
+
+    //используем reselect, чтобы мемоизировать подтягивание данных из разных файлов редьюсера
+    const filteredHeroesSelector = createSelector(
+        (state) => state.filters.activeFilter,
+        (state) => state.heroes.heroes,
+        (filters, heroes) => {
+            if (filter === 'all') {
+                console.log('render');
+                return heroes;
+            } else {
+                return heroes.filter(item => item.element === filters);
+            }
+        }
+    );
+
+    const filteredHeroes = useSelector(filteredHeroesSelector);
+
+    const heroesLoadingStatus = useSelector(state => state.heroesLoadingStatus);
     const dispatch = useDispatch();
     const {request} = useHttp();
 
