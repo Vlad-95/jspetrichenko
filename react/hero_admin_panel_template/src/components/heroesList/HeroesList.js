@@ -32,7 +32,7 @@ const HeroesList = () => {
         (state) => state.filters.activeFilter,
         (state) => state.heroes.heroes,
         (filters, heroes) => {
-            if (filter === 'all') {
+            if (filters === 'all') {
                 console.log('render');
                 return heroes;
             } else {
@@ -43,12 +43,12 @@ const HeroesList = () => {
 
     const filteredHeroes = useSelector(filteredHeroesSelector);
 
-    const heroesLoadingStatus = useSelector(state => state.heroesLoadingStatus);
+    const heroesLoadingStatus = useSelector(state => state.heroes.heroesLoadingStatus);
     const dispatch = useDispatch();
     const {request} = useHttp();
 
     useEffect(() => {
-        dispatch(heroesFetching());
+        dispatch('HEROES_FETCHING'); // ENHANCERS
         request("http://localhost:3001/heroes")
             .then(data => dispatch(heroesFetched(data)))
             .catch(() => dispatch(heroesFetchingError()))
