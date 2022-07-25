@@ -36,6 +36,7 @@ const heroes = createReducer(initialState, {
     state => state
 );
 
+
 //1й варинат использования createReducer
 // const heroes = createReducer(initialState, builder => {
 //     builder
